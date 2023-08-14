@@ -1,0 +1,24 @@
+program MJProgram
+int i[];
+int a, b, c;
+int p;
+const int x = 4;
+const bool flag = true;
+bool flag2;
+int y[];
+const char z = 'a';
+{	
+	
+	int k(int a, char z) int m, j;{
+		return 0;
+	}
+
+	void main()
+	int proba[];
+	{
+		print(1);
+		
+		print(2);
+	}
+	
+}

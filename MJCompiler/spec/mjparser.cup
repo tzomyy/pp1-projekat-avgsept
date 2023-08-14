@@ -1,0 +1,439 @@
+package rs.ac.bg.etf.pp1;
+
+import java_cup.runtime.*;
+import org.apache.log4j.*;
+import rs.ac.bg.etf.pp1.ast.*;
+
+parser code {:
+
+	boolean errorDetected = false;
+	
+	Logger log = Logger.getLogger(getClass());
+   
+   
+    // slede redefinisani metodi za prijavu gresaka radi izmene teksta poruke
+     
+    public void report_fatal_error(String message, Object info) throws java.lang.Exception {
+      done_parsing();
+      report_error(message, info);
+    }
+  
+    public void syntax_error(Symbol cur_token) {
+        report_error("\nSintaksna greska", cur_token);
+    }
+  
+    public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
+        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+    }
+
+    public void report_error(String message, Object info) {
+    	errorDetected = true;
+    	StringBuilder msg = new StringBuilder(message); 
+    	if (info instanceof Symbol)
+            msg.append (" na liniji ").append(((Symbol)info).left);
+        log.error(msg.toString());
+    }
+
+
+:}
+
+init with {:
+	errorDetected = false;
+:}
+
+scan with {:
+	Symbol s = this.getScanner().next_token();
+	if (s != null && s.value != null) 
+		log.info(s.toString() + " " + s.value.toString());
+	return s;
+:}
+
+
+
+
+terminal COLON, PLUS, RPAREN, COMMA, SEMICOLON, EXTENDS, NEW, ELSE, IF, DOT, LCURLY;
+terminal MINUS, NOT_EQUAL, VOID, AND, LPAREN, EQUAL, LESS, LSQUARE;
+terminal IS_EQUAL, BREAK, READ, INCREMENT, ASTERISK, GREATER, WHILE, SLASH;
+terminal GREATER_EQUAL, LESS_EQUAL, PRINT, RCURLY, CLASS, DECREMENT, PROG;
+terminal RSQUARE, RETURN, CONTINUE, OR, CONST, PERCENT, ASSIGN;
+terminal Character CHAR;
+terminal Integer NUMBER;
+terminal Boolean BOOL;
+terminal String IDENT;
+terminal FINDANY;
+terminal FINDANDREPLACE;
+terminal FOREACH;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+nonterminal MethodDeclList;
+nonterminal VarDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
+
+nonterminal FormPars;
+nonterminal StatementList;
+nonterminal Statement;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName;
+
+nonterminal Declaration;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct SingleConstDecl;
+nonterminal MultipleConstDecl;
+nonterminal VarDeclarations;
+nonterminal MoreVarDecl;
+nonterminal EndOfVarDecl;
+nonterminal Brackets;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj TypeMethod;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj VoidMethod;
+nonterminal MethodFormPars;
+nonterminal MethodVarDecl;
+nonterminal SingleFormPar;
+nonterminal MultipleFormPar;
+
+nonterminal ClassDecl;
+nonterminal ClassName;
+nonterminal ClassConstrMethod;
+nonterminal ClassMethod;
+nonterminal ClassConstr;
+nonterminal ClassVarDecl;
+nonterminal ClassExtends;
+
+nonterminal DesignatorStatement;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorName;
+
+nonterminal WhileStart;
+nonterminal WhileEnd;
+
+nonterminal PrintExpr;
+nonterminal StmtConst;
+
+nonterminal IfStatement;
+nonterminal ElseStatement;
+nonterminal DummyBeforeIf;
+nonterminal BeforeIFConditionDummy;
+nonterminal AfterIFConditionDummy;
+nonterminal DummyAfterElse;
+
+
+nonterminal Assignop;
+nonterminal AssignDummy;
+nonterminal FactParam;
+nonterminal ActPars;
+
+nonterminal Label;
+
+nonterminal Relop;
+nonterminal Addop;
+nonterminal Mulop;
+
+nonterminal Condition;
+nonterminal CondTerm;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct MoreCondFacts;
+nonterminal OrDummy;
+
+precedence left ELSE;
+
+
+Program ::= (Program) ProgName:p Declaration LCURLY MethodDeclList RCURLY;
+
+ProgName ::= (ProgName) PROG IDENT:progName;
+
+Declaration ::= (ConstDeclaration) Declaration ConstDecl
+			|
+			(VarDeclaration) Declaration VarDecl
+			|
+			(ClassDeclaration) Declaration ClassDecl
+			|
+			(NoDeclaration) /* epsilon */
+			;
+			
+ConstDecl ::= (ConstDecl) CONST Type:constType SingleConstDecl MultipleConstDecl SEMICOLON;
+
+SingleConstDecl ::= (BoolConstDecl) IDENT:constName EQUAL BOOL:booleanConst
+				|
+				(IntegerConstDecl) IDENT:constName EQUAL NUMBER:numberConst
+				|
+				(CharConstDecl) IDENT:constName EQUAL CHAR:charConst
+				;
+				
+MultipleConstDecl ::= (MultipleConstDecls) MultipleConstDecl COMMA SingleConstDecl
+					|
+					(EndOfDeclaration) /* epsilon */
+					;	
+
+VarDecl ::= (VarDecls) Type:typeVar VarDeclarations
+			;
+
+VarDeclarations ::= (MultipleVarDecl) MoreVarDecl VarDeclarations
+				|
+				(EndOfVarDeclarations) EndOfVarDecl
+				;
+				
+MoreVarDecl ::= (MoreVarDecls) IDENT:varName Brackets COMMA
+			|
+			(ErrorMoreVarDecl) error COMMA:l
+			{: parser.report_error("Izvrsen oporavak kod dodeljivanja globalne promenljive do , u liniji  " + lleft, null); :}
+			;
+
+EndOfVarDecl ::= (EndOfVarDeclar) IDENT:varName Brackets SEMICOLON
+			|
+			(ErrorEndOfVarDecl) error SEMICOLON:l
+			{: parser.report_error("Izvrsen oporavak kod dodeljivanja globalne promenljive do ; u liniji " + lleft, null); :}
+			;
+			
+Brackets ::= (ArrayBrackets) LSQUARE RSQUARE
+			|
+			(NoBrackets) /*epsilon*/
+			;
+			
+ClassDecl ::= (ClassDecl) CLASS ClassName ClassExtends ClassVarDecl ClassConstrMethod RCURLY;
+
+ClassName ::= (ClassName) IDENT:className;
+
+ClassConstrMethod ::= (ClassOnlyCurly) LCURLY RCURLY
+					|
+					(ClassMethodCurly) LCURLY ClassMethod RCURLY
+					|
+					(ClassConstrMethodCurly) LCURLY ClassConstr ClassMethod RCURLY
+					|
+					(NoClassConstrMethodCurly) /* epsilon */
+					;
+					
+ClassMethod ::= (MultipleClassMethod) ClassMethod MethodDecl
+			|
+			(EndOfClassMethod) MethodDecl
+			;
+
+ClassVarDecl ::= (MultipleClassVarDecl) ClassVarDecl VarDecl
+				|
+				(EndOfClassVarDecl) /* epsilon*/
+				;
+
+ClassExtends ::= (ClassExtend) EXTENDS Type LCURLY 
+				|
+				(NoClassExtend)  LCURLY 
+				|
+				(ErrorClassExtend) error:l LCURLY
+				{: parser.report_error("Izvrsen oporavak kod prosirenja natklase do { u liniji " + lleft, null); :}
+				;
+
+
+MethodDeclList ::= (MethDeclarations) MethodDeclList MethodDecl
+				|
+				(NoMethDeclarations) /* epislon */
+				;
+
+MethodDecl ::= (TypeMethodDecl) TypeMethod LPAREN MethodFormPars MethodVarDecl LCURLY StatementList RCURLY
+					|
+					(VoidMethodDecl) VoidMethod LPAREN MethodFormPars MethodVarDecl LCURLY StatementList RCURLY
+					;
+					
+TypeMethod ::= (TypeMethod) Type:methodType IDENT:methodName;
+
+VoidMethod ::= (VoidMethod) VOID IDENT:methodName;
+					
+MethodFormPars ::= (MethodFormParams) FormPars RPAREN
+				|
+				(NoMethodFormParams) RPAREN
+				|
+				(ErrorMethodFormParams) error RPAREN:l
+				{: parser.report_error("Izvrsen oporavak kod formalnog do ) u liniji " + lleft, null); :}
+				;
+				
+MethodVarDecl ::= (MethodVarDecls) MethodVarDecl VarDecl
+				|
+				(EndOfMethodVarDecl) /*epsilon*/
+				;
+				
+FormPars ::= (FormPars) MultipleFormPar;
+
+SingleFormPar ::= (SingleFormParam) Type:formType IDENT:formName Brackets;
+
+MultipleFormPar ::= (MultipleFormPars) MultipleFormPar COMMA SingleFormPar
+				|
+				(EndOfFormPar) SingleFormPar
+				|
+				(ErrorFormComma) error:l {: parser.report_error("Izvrsen oporavak kod formalnog paramtera do , u liniji " + lleft, null); :} COMMA SingleFormPar
+				;
+
+StatementList ::= (Statements) StatementList Statement
+				|
+				(NoStatement) /* epsilon */
+				;
+				
+Statement ::= (DesignStmt) DesignatorStatement 
+			|
+			(IfStmt) IfStatement Statement ElseStatement
+			|
+			(WhileStmt) WhileStart LPAREN Condition RPAREN Statement WhileEnd
+			|
+			(BreakStmt) BREAK SEMICOLON
+			|
+			(ContinueStmt) CONTINUE SEMICOLON
+			|
+			(ReturnNoExpr) RETURN SEMICOLON
+			|
+			(ReturnExpr) RETURN Expr SEMICOLON
+			|
+			(ReadStmt) READ LPAREN Designator RPAREN SEMICOLON
+			|
+			(PrintStmt) PRINT LPAREN PrintExpr StmtConst RPAREN SEMICOLON
+			|
+			(FindAnyStmt) Designator:designator Assignop Designator:array DOT FINDANY LPAREN Expr RPAREN SEMICOLON
+			|
+			(FindAndReplaceStmt) Designator Assignop Designator DOT FINDANDREPLACE LPAREN Expr COMMA IDENT:ident ASSIGN Expr RPAREN SEMICOLON
+			|
+			(ForeachStmt) Designator DOT FOREACH LPAREN IDENT:ident ASSIGN Statement RPAREN SEMICOLON
+			|
+			(ListStmts) LCURLY StatementList RCURLY
+			;
+
+StmtConst ::= (StmtCnst) COMMA NUMBER:num
+			|
+			(NoStmtCnst) /* epsilon */
+			;
+			
+PrintExpr ::= (PrintExpr) Expr ;
+			
+WhileStart ::= (WhileStart) WHILE;
+
+WhileEnd ::= (WhileEnd) /* epsilon */;
+			
+DummyBeforeIf ::= (DummyBeforeIf);
+			
+IfStatement ::= (IfState) DummyBeforeIf IF BeforeIFConditionDummy LPAREN Condition RPAREN AfterIFConditionDummy
+			|
+			(ErrorStmt) error RPAREN:l
+			{: parser.report_error("Izvrsen oporavak kod if konstrukcije do ; u liniji " + lleft, null); :}
+			;
+			
+BeforeIFConditionDummy ::= (BeforeIFConditionDummy);
+AfterIFConditionDummy ::= (AfterIFConditionDummy);
+
+ElseStatement ::= (ElseStmt) ELSE DummyAfterElse Statement
+				|
+				(NoElseStmt) /* epsilon */
+				;
+
+DummyAfterElse ::= (DummyAfterElse);
+			
+DesignatorStatement ::= (DesignAssign) Designator Assignop Expr AssignDummy SEMICOLON
+					|
+					(DesignFunction) Designator LPAREN FactParam RPAREN SEMICOLON
+					|
+					(DesignInc) Designator INCREMENT SEMICOLON
+					|
+					(DesignDec) Designator DECREMENT SEMICOLON
+					|
+					(DesignError) error SEMICOLON:l
+					{: parser.report_error("Izvrsen oporavak kod dodeljivanja vrednosti do ; u liniji " + lleft, null); :}
+					;
+					
+					
+AssignDummy ::= (AssignDummy);
+
+FactParam ::= (FactFuncParams) ActPars
+				|
+				(NoFactFuncParams) /* epsilon */
+				;
+		
+ActPars ::= (ActParams) ActPars COMMA Expr
+		|
+		(SingleActParam) Expr
+		; 
+		
+Condition ::= (Conditions) CondTerm OrDummy OR CondTerm
+			|
+			(SingleCondition) CondTerm
+			;
+			
+OrDummy ::= (OrDummy);
+				
+CondTerm ::= (CondTerms) CondFact AND CondFact
+			|
+			(SingleCondTerm) CondFact
+			;
+				
+CondFact ::= (CondFact) Expr MoreCondFacts
+		;
+		
+MoreCondFacts ::= (MoreConds) Relop:rel Expr
+				|
+				(EndOfCond) /* epsilon*/
+				;
+				
+Expr ::= (NegativeExpr) MINUS Term:t
+		|
+		(MultipleExpr) Expr Addop Term
+		|
+		(SingleExpr) Term
+		;
+				
+Term ::= (SingleTerm) Factor
+		|
+		(MultipleTerms) Term Mulop Factor
+		;
+				
+Factor ::= (FactVar) Designator
+		|
+		(FactFunc) Designator LPAREN FactParam RPAREN 
+		|
+		(FactNum) NUMBER
+		|
+		(FactChar) CHAR
+		|
+		(FactBoolean) BOOL
+		|
+		(FactConstrArray) NEW Type:arrayType LSQUARE Expr RSQUARE
+		|
+		(FactConstrObject) NEW Type:objectType LPAREN FactParam RPAREN
+		|
+		(FactExpr) LPAREN Expr RPAREN
+		;
+				
+Designator ::= (ClassDesign) Designator DOT IDENT:var
+			|
+			(ArrayDesign) DesignatorName:nameArray LSQUARE Expr:expr3 RSQUARE
+			|
+			(VarDesign) IDENT:var;
+			
+DesignatorName ::= (DesignatorName) IDENT:name;
+
+Assignop ::= (Assignop) EQUAL;
+
+Label ::= (Label) IDENT;
+
+Relop ::= (IsEqual) IS_EQUAL
+		|
+		(NotEqual) NOT_EQUAL
+		|
+		(Greater) GREATER
+		|
+		(GreaterEqual) GREATER_EQUAL
+		|
+		(Less) LESS
+		|
+		(LessEqual) LESS_EQUAL
+		;
+
+Addop ::= (Plus) PLUS
+		|
+		(Minus) MINUS
+		;
+
+Mulop ::= (Asterisk) ASTERISK
+		|
+		(Slash) SLASH
+		|
+		(Percent) PERCENT
+		;
+
+Type ::= (Type) IDENT:typeName;
+
+			
