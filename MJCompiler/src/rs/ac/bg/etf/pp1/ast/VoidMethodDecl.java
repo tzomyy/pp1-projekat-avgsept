@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 14/7/2023 12:2:43
+// 16/7/2023 0:32:35
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -10,15 +10,18 @@ public class VoidMethodDecl extends MethodDecl {
     private VoidMethod VoidMethod;
     private MethodFormPars MethodFormPars;
     private MethodVarDecl MethodVarDecl;
+    private MethodDummy MethodDummy;
     private StatementList StatementList;
 
-    public VoidMethodDecl (VoidMethod VoidMethod, MethodFormPars MethodFormPars, MethodVarDecl MethodVarDecl, StatementList StatementList) {
+    public VoidMethodDecl (VoidMethod VoidMethod, MethodFormPars MethodFormPars, MethodVarDecl MethodVarDecl, MethodDummy MethodDummy, StatementList StatementList) {
         this.VoidMethod=VoidMethod;
         if(VoidMethod!=null) VoidMethod.setParent(this);
         this.MethodFormPars=MethodFormPars;
         if(MethodFormPars!=null) MethodFormPars.setParent(this);
         this.MethodVarDecl=MethodVarDecl;
         if(MethodVarDecl!=null) MethodVarDecl.setParent(this);
+        this.MethodDummy=MethodDummy;
+        if(MethodDummy!=null) MethodDummy.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
     }
@@ -47,6 +50,14 @@ public class VoidMethodDecl extends MethodDecl {
         this.MethodVarDecl=MethodVarDecl;
     }
 
+    public MethodDummy getMethodDummy() {
+        return MethodDummy;
+    }
+
+    public void setMethodDummy(MethodDummy MethodDummy) {
+        this.MethodDummy=MethodDummy;
+    }
+
     public StatementList getStatementList() {
         return StatementList;
     }
@@ -63,6 +74,7 @@ public class VoidMethodDecl extends MethodDecl {
         if(VoidMethod!=null) VoidMethod.accept(visitor);
         if(MethodFormPars!=null) MethodFormPars.accept(visitor);
         if(MethodVarDecl!=null) MethodVarDecl.accept(visitor);
+        if(MethodDummy!=null) MethodDummy.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
     }
 
@@ -71,6 +83,7 @@ public class VoidMethodDecl extends MethodDecl {
         if(VoidMethod!=null) VoidMethod.traverseTopDown(visitor);
         if(MethodFormPars!=null) MethodFormPars.traverseTopDown(visitor);
         if(MethodVarDecl!=null) MethodVarDecl.traverseTopDown(visitor);
+        if(MethodDummy!=null) MethodDummy.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
@@ -78,6 +91,7 @@ public class VoidMethodDecl extends MethodDecl {
         if(VoidMethod!=null) VoidMethod.traverseBottomUp(visitor);
         if(MethodFormPars!=null) MethodFormPars.traverseBottomUp(visitor);
         if(MethodVarDecl!=null) MethodVarDecl.traverseBottomUp(visitor);
+        if(MethodDummy!=null) MethodDummy.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -101,6 +115,12 @@ public class VoidMethodDecl extends MethodDecl {
 
         if(MethodVarDecl!=null)
             buffer.append(MethodVarDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(MethodDummy!=null)
+            buffer.append(MethodDummy.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

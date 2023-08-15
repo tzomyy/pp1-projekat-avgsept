@@ -94,6 +94,7 @@ nonterminal MethodFormPars MethodFormPars;
 nonterminal MethodVarDecl MethodVarDecl;
 nonterminal SingleFormPar SingleFormPar;
 nonterminal MultipleFormPar MultipleFormPar;
+nonterminal MethodDummy MethodDummy;
 
 nonterminal ClassDecl ClassDecl;
 nonterminal ClassName ClassName;
@@ -136,6 +137,12 @@ nonterminal CondTerm CondTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MoreCondFacts;
 nonterminal OrDummy OrDummy;
+nonterminal ForeachDesignator ForeachDesignator;
+
+nonterminal DummyFindAny DummyFindAny;
+nonterminal DummyEq DummyEq;
+nonterminal DummyNon DummyNon;
+nonterminal FindAnyEnd FindAnyEnd;
 
 precedence left ELSE;
 
@@ -229,10 +236,12 @@ MethodDeclList ::= (MethDeclarations) MethodDeclList:M1 MethodDecl:M2 {: RESULT=
 				(NoMethDeclarations) {: RESULT=new NoMethDeclarations(); :} /* epislon */
 				;
 
-MethodDecl ::= (TypeMethodDecl) TypeMethod:T1 LPAREN MethodFormPars:M2 MethodVarDecl:M3 LCURLY StatementList:S4 RCURLY {: RESULT=new TypeMethodDecl(T1, M2, M3, S4); RESULT.setLine(T1left); :}
+MethodDecl ::= (TypeMethodDecl) TypeMethod:T1 LPAREN MethodFormPars:M2 MethodVarDecl:M3 MethodDummy:M4 LCURLY StatementList:S5 RCURLY {: RESULT=new TypeMethodDecl(T1, M2, M3, M4, S5); RESULT.setLine(T1left); :}
 					|
-					(VoidMethodDecl) VoidMethod:V1 LPAREN MethodFormPars:M2 MethodVarDecl:M3 LCURLY StatementList:S4 RCURLY {: RESULT=new VoidMethodDecl(V1, M2, M3, S4); RESULT.setLine(V1left); :}
+					(VoidMethodDecl) VoidMethod:V1 LPAREN MethodFormPars:M2 MethodVarDecl:M3 MethodDummy:M4 LCURLY StatementList:S5 RCURLY {: RESULT=new VoidMethodDecl(V1, M2, M3, M4, S5); RESULT.setLine(V1left); :}
 					;
+
+MethodDummy ::= (MethodDummy) {: RESULT=new MethodDummy(); :} /* epsilon */ ;
 					
 TypeMethod ::= (TypeMethod) Type:methodType IDENT:methodName {: RESULT=new TypeMethod(methodType, methodName); RESULT.setLine(methodTypeleft); :};
 
@@ -285,14 +294,24 @@ Statement ::= (DesignStmt) DesignatorStatement:D1 {: RESULT=new DesignStmt(D1); 
 			|
 			(PrintStmt) PRINT LPAREN PrintExpr:P1 StmtConst:S2 RPAREN SEMICOLON {: RESULT=new PrintStmt(P1, S2); RESULT.setLine(P1left); :}
 			|
-			(FindAnyStmt) Designator:designator Assignop:A1 Designator:array DOT FINDANY LPAREN Expr:E2 RPAREN SEMICOLON {: RESULT=new FindAnyStmt(designator, A1, array, E2); RESULT.setLine(designatorleft); :}
+			(FindAnyStmt) Designator:designator Assignop:A1 Designator:array DOT FINDANY LPAREN Expr:E2 DummyFindAny:D3 DummyEq:D4 DummyNon:D5 SEMICOLON FindAnyEnd:F6 {: RESULT=new FindAnyStmt(designator, A1, array, E2, D3, D4, D5, F6); RESULT.setLine(designatorleft); :}
 			|
 			(FindAndReplaceStmt) Designator:D1 Assignop:A2 Designator:D3 DOT FINDANDREPLACE LPAREN Expr:E4 COMMA IDENT:ident ASSIGN Expr:E5 RPAREN SEMICOLON {: RESULT=new FindAndReplaceStmt(D1, A2, D3, E4, ident, E5); RESULT.setLine(D1left); :}
 			|
-			(ForeachStmt) Designator:D1 DOT FOREACH LPAREN IDENT:ident ASSIGN Statement:S2 RPAREN SEMICOLON {: RESULT=new ForeachStmt(D1, ident, S2); RESULT.setLine(D1left); :}
+			(ForeachStmt) ForeachDesignator:F1 LPAREN IDENT:ident ASSIGN StatementList:S2 RPAREN SEMICOLON {: RESULT=new ForeachStmt(F1, ident, S2); RESULT.setLine(F1left); :}
 			|
 			(ListStmts) LCURLY StatementList:S1 RCURLY {: RESULT=new ListStmts(S1); RESULT.setLine(S1left); :}
 			;
+
+DummyFindAny ::= (DummyFindAny) RPAREN {: RESULT=new DummyFindAny(); :};	
+
+DummyEq ::= (DummyEq) {: RESULT=new DummyEq(); :} /* epsilon */;
+
+DummyNon ::= (DummyNon) {: RESULT=new DummyNon(); :} /* epsilon */;
+
+FindAnyEnd ::= (FindAnyEnd) {: RESULT=new FindAnyEnd(); :} /* epislon */;			
+
+ForeachDesignator ::= (ForeachDesignator) Designator:D1 DOT FOREACH {: RESULT=new ForeachDesignator(D1); RESULT.setLine(D1left); :} /* epislon */;
 
 StmtConst ::= (StmtCnst) COMMA NUMBER:num {: RESULT=new StmtCnst(num); RESULT.setLine(numleft); :}
 			|

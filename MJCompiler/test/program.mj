@@ -7,18 +7,38 @@ const bool flag = true;
 bool flag2;
 int y[];
 const char z = 'a';
+const int jedan = 1;
 {	
 	
-	int k(int a, char z) int m, j;{
-		return 0;
+	int sum(int z, int d)
+	{
+		return z + d;
+	}
+	
+
+	int inkrement(int a, int inc) 
+		int pom; 
+	{
+		if(inc == jedan) pom = 1;
+		else if(inc == 2) pom = a;
+
+		return sum(a,pom);
 	}
 
 	void main()
-	int proba[];
 	{
-		print(1);
+				
+		y = new int[5];
+		c = 0;
+		while (c < 5){			
+			y[c] = c;
+			c++;
+		}
+		c = inkrement(c, 2);
+		print(c);
+		flag2 = y.findAny(1);
 		
-		print(2);
+		print(flag2);
 	}
 	
 }

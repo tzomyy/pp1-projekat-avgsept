@@ -322,10 +322,10 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 
 	public void visit(MethDeclarations methDecl) {		
 		
-		if (!this.hasReturn && (currMethod.getType() != Tab.noType)) {
-			report_error("Metoda " + this.currMethod.getName() + " nema povratnu vrednost u telu svoje funkcije",
-					methDecl);
-		}
+//		if (!this.hasReturn && (currMethod.getType() != Tab.noType)) {
+//			report_error("Metoda " + this.currMethod.getName() + " nema povratnu vrednost u telu svoje funkcije",
+//					methDecl);
+//		}
 		
 		if (currMethod.getName().equals("main") && formParams.size() > 0) {
 			report_error("Main metoda ne sme da ima parametre!",
@@ -538,8 +538,9 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 	}
 	
 	public void visit(ForeachStmt foreachStmt) {
-
-		if (foreachStmt.getDesignator().obj.getType().getKind() != Struct.Array) {
+		this.depthWhile--;
+		
+		if ( foreachStmt.getForeachDesignator().getDesignator().obj.getType().getKind() != Struct.Array) {
 			report_error("Greska na liniji " + foreachStmt.getLine() +
 					": Naredba foreach mora biti pozvana za promenljivu koja je tipa niz!", foreachStmt);
 			return;
@@ -552,11 +553,21 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 			return;
 		}
 		
-		if (ident.getKind() != foreachStmt.getDesignator().obj.getType().getElemType().getKind()) {
+		if (ident.getKind() != foreachStmt.getForeachDesignator().getDesignator().obj.getType().getElemType().getKind()) {
 			report_error("Greska na liniji " + foreachStmt.getLine() +
 					": Elementi niza nisu istog tipa kao promenljiva za iteriranje!", foreachStmt);
 			return;
 		}
+	}
+	
+	public void visit(ForeachDesignator designator) {
+		this.depthWhile++;
+	}
+	
+	public void visit(DesignError designator) {
+		report_error("Greska na liniji " + designator.getLine() +
+				": Ovaj izraz se ne poklapa sa napisanom gramatikom!", null);
+		return;
 	}
 	
 	

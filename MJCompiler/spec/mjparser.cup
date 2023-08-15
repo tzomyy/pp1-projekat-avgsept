@@ -94,6 +94,7 @@ nonterminal MethodFormPars;
 nonterminal MethodVarDecl;
 nonterminal SingleFormPar;
 nonterminal MultipleFormPar;
+nonterminal MethodDummy;
 
 nonterminal ClassDecl;
 nonterminal ClassName;
@@ -136,6 +137,12 @@ nonterminal CondTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct MoreCondFacts;
 nonterminal OrDummy;
+nonterminal ForeachDesignator;
+
+nonterminal DummyFindAny;
+nonterminal DummyEq;
+nonterminal DummyNon;
+nonterminal FindAnyEnd;
 
 precedence left ELSE;
 
@@ -229,10 +236,12 @@ MethodDeclList ::= (MethDeclarations) MethodDeclList MethodDecl
 				(NoMethDeclarations) /* epislon */
 				;
 
-MethodDecl ::= (TypeMethodDecl) TypeMethod LPAREN MethodFormPars MethodVarDecl LCURLY StatementList RCURLY
+MethodDecl ::= (TypeMethodDecl) TypeMethod LPAREN MethodFormPars MethodVarDecl MethodDummy LCURLY StatementList RCURLY
 					|
-					(VoidMethodDecl) VoidMethod LPAREN MethodFormPars MethodVarDecl LCURLY StatementList RCURLY
+					(VoidMethodDecl) VoidMethod LPAREN MethodFormPars MethodVarDecl MethodDummy LCURLY StatementList RCURLY
 					;
+
+MethodDummy ::= (MethodDummy) /* epsilon */ ;
 					
 TypeMethod ::= (TypeMethod) Type:methodType IDENT:methodName;
 
@@ -285,14 +294,24 @@ Statement ::= (DesignStmt) DesignatorStatement
 			|
 			(PrintStmt) PRINT LPAREN PrintExpr StmtConst RPAREN SEMICOLON
 			|
-			(FindAnyStmt) Designator:designator Assignop Designator:array DOT FINDANY LPAREN Expr RPAREN SEMICOLON
+			(FindAnyStmt) Designator:designator Assignop Designator:array DOT FINDANY LPAREN Expr DummyFindAny DummyEq DummyNon SEMICOLON FindAnyEnd
 			|
 			(FindAndReplaceStmt) Designator Assignop Designator DOT FINDANDREPLACE LPAREN Expr COMMA IDENT:ident ASSIGN Expr RPAREN SEMICOLON
 			|
-			(ForeachStmt) Designator DOT FOREACH LPAREN IDENT:ident ASSIGN Statement RPAREN SEMICOLON
+			(ForeachStmt) ForeachDesignator LPAREN IDENT:ident ASSIGN StatementList RPAREN SEMICOLON
 			|
 			(ListStmts) LCURLY StatementList RCURLY
 			;
+
+DummyFindAny ::= (DummyFindAny) RPAREN;	
+
+DummyEq ::= (DummyEq) /* epsilon */;
+
+DummyNon ::= (DummyNon) /* epsilon */;
+
+FindAnyEnd ::= (FindAnyEnd) /* epislon */;			
+
+ForeachDesignator ::= (ForeachDesignator) Designator DOT FOREACH /* epislon */;
 
 StmtConst ::= (StmtCnst) COMMA NUMBER:num
 			|
