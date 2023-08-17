@@ -510,32 +510,38 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 	
 	public void visit(FindAndReplaceStmt stmt) {
 		
-		if (stmt.getDesignator().obj.getType().getKind() != Struct.Array) {
+		if (stmt.getDesignatorFAR().getDesignator().obj.getType().getKind() != Struct.Array) {
 			report_error("Greska na liniji " + stmt.getLine() +
 					": Promenljiva kojoj se dodeljuje naredba findAndReplace mora biti tipa niz!", null);
 			return;
 		}
 		
-		if (stmt.getDesignator1().obj.getType().getKind() != Struct.Array) {
+		if (stmt.getDesignatorFAR().getDesignator1().obj.getType().getKind() != Struct.Array) {
 			report_error("Greska na liniji " + stmt.getLine() +
 					": Naredba findAndReplace mora biti pozvana za promenljivu koja je tipa niz!", null);
 			return;
 		}
 		
-		Obj ident = Tab.find(stmt.getIdent());
+		Obj ident = Tab.find(stmt.getFARIdent().getIdent());
 		if (ident == Tab.noObj || ident.getKind() != Obj.Var) {
 			report_error("Greska na liniji " + stmt.getLine() +
 					": Promenljiva nije definisana u tabeli simbola ili nije promenljiva!", null);
 			return;
 		}
 		
-		if (ident.getKind() != stmt.getDesignator().obj.getType().getElemType().getKind()) {
+		if (ident.getKind() != stmt.getDesignatorFAR().getDesignator().obj.getType().getElemType().getKind()) {
 			report_error("Greska na liniji " + stmt.getLine() +
 					": Elementi niza nisu istog tipa kao promenljiva za iteriranje!", null);
 			return;
 		}
 		
 	}
+	
+	public void visit(FARIdent ident) {
+		ident.obj = Tab.find(ident.getIdent());
+	}
+	
+	
 	
 	public void visit(ForeachStmt foreachStmt) {
 		this.depthWhile--;
@@ -546,7 +552,7 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 			return;
 		}
 		
-		Obj ident = Tab.find(foreachStmt.getIdent());
+		Obj ident = Tab.find(foreachStmt.getForeachIdent().getIdent());
 		if (ident == Tab.noObj || ident.getKind() != Obj.Var) {
 			report_error("Greska na liniji " + foreachStmt.getLine() +
 					": Promenljiva nije definisana u tabeli simbola ili nije promenljiva!", foreachStmt);
@@ -560,9 +566,15 @@ public class SemanticAnalyzer extends VisitorAdaptor{
 		}
 	}
 	
+	public void visit (ForeachIdent ident) {
+		ident.obj = Tab.find(ident.getIdent());
+	}
+	
 	public void visit(ForeachDesignator designator) {
 		this.depthWhile++;
 	}
+	
+	
 	
 	public void visit(DesignError designator) {
 		report_error("Greska na liniji " + designator.getLine() +

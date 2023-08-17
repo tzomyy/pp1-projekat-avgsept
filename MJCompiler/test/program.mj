@@ -27,7 +27,7 @@ const int jedan = 1;
 
 	void main()
 	{
-				
+		print(x);
 		y = new int[5];
 		c = 0;
 		while (c < 5){			
@@ -36,7 +36,7 @@ const int jedan = 1;
 		}
 		c = inkrement(c, 2);
 		print(c);
-		flag2 = y.findAny(1);
+		flag2 = y.findAny(1*2+2-1);
 		
 		print(flag2);
 	}

@@ -144,6 +144,15 @@ nonterminal DummyEq DummyEq;
 nonterminal DummyNon DummyNon;
 nonterminal FindAnyEnd FindAnyEnd;
 
+nonterminal ForeachEnd ForeachEnd;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ForeachIdent;
+nonterminal ForeachLoop ForeachLoop;
+
+nonterminal DesignatorFAR DesignatorFAR;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj FARIdent;
+nonterminal FAREnd FAREnd;
+nonterminal FARAssign FARAssign;
+
 precedence left ELSE;
 
 
@@ -296,12 +305,20 @@ Statement ::= (DesignStmt) DesignatorStatement:D1 {: RESULT=new DesignStmt(D1); 
 			|
 			(FindAnyStmt) Designator:designator Assignop:A1 Designator:array DOT FINDANY LPAREN Expr:E2 DummyFindAny:D3 DummyEq:D4 DummyNon:D5 SEMICOLON FindAnyEnd:F6 {: RESULT=new FindAnyStmt(designator, A1, array, E2, D3, D4, D5, F6); RESULT.setLine(designatorleft); :}
 			|
-			(FindAndReplaceStmt) Designator:D1 Assignop:A2 Designator:D3 DOT FINDANDREPLACE LPAREN Expr:E4 COMMA IDENT:ident ASSIGN Expr:E5 RPAREN SEMICOLON {: RESULT=new FindAndReplaceStmt(D1, A2, D3, E4, ident, E5); RESULT.setLine(D1left); :}
+			(FindAndReplaceStmt) DesignatorFAR:D1   LPAREN Expr:E2 COMMA FARIdent:F3 ASSIGN Expr:E4 FARAssign:F5 RPAREN SEMICOLON FAREnd:F6 {: RESULT=new FindAndReplaceStmt(D1, E2, F3, E4, F5, F6); RESULT.setLine(D1left); :}
 			|
-			(ForeachStmt) ForeachDesignator:F1 LPAREN IDENT:ident ASSIGN StatementList:S2 RPAREN SEMICOLON {: RESULT=new ForeachStmt(F1, ident, S2); RESULT.setLine(F1left); :}
+			(ForeachStmt) ForeachDesignator:F1 LPAREN ForeachIdent:F2 ASSIGN StatementList:S3 ForeachLoop:F4 ForeachEnd:F5 {: RESULT=new ForeachStmt(F1, F2, S3, F4, F5); RESULT.setLine(F1left); :}
 			|
 			(ListStmts) LCURLY StatementList:S1 RCURLY {: RESULT=new ListStmts(S1); RESULT.setLine(S1left); :}
 			;
+	
+FAREnd ::= (FAREnd) {: RESULT=new FAREnd(); :} /* epsilon */;
+			
+FARAssign ::= (FARAssign) {: RESULT=new FARAssign(); :} /* epsilon */;
+	
+FARIdent ::= (FARIdent) IDENT:ident {: RESULT=new FARIdent(ident); RESULT.setLine(identleft); :};
+			
+DesignatorFAR ::= (DesignatorFAR) Designator:D1 Assignop:A2 Designator:D3 DOT FINDANDREPLACE {: RESULT=new DesignatorFAR(D1, A2, D3); RESULT.setLine(D1left); :}; 
 
 DummyFindAny ::= (DummyFindAny) RPAREN {: RESULT=new DummyFindAny(); :};	
 
@@ -309,7 +326,13 @@ DummyEq ::= (DummyEq) {: RESULT=new DummyEq(); :} /* epsilon */;
 
 DummyNon ::= (DummyNon) {: RESULT=new DummyNon(); :} /* epsilon */;
 
-FindAnyEnd ::= (FindAnyEnd) {: RESULT=new FindAnyEnd(); :} /* epislon */;			
+FindAnyEnd ::= (FindAnyEnd) {: RESULT=new FindAnyEnd(); :} /* epislon */;	
+
+ForeachLoop ::= (ForeachLoop) RPAREN {: RESULT=new ForeachLoop(); :} ;
+
+ForeachEnd ::= (ForeachEnd) SEMICOLON {: RESULT=new ForeachEnd(); :};
+
+ForeachIdent ::= (ForeachIdent) IDENT:ident {: RESULT=new ForeachIdent(ident); RESULT.setLine(identleft); :} ;		
 
 ForeachDesignator ::= (ForeachDesignator) Designator:D1 DOT FOREACH {: RESULT=new ForeachDesignator(D1); RESULT.setLine(D1left); :} /* epislon */;
 

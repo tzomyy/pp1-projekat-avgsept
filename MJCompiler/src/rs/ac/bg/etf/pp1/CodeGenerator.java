@@ -2,6 +2,7 @@ package rs.ac.bg.etf.pp1;
 
 import java.util.*;
 
+
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.etf.pp1.mj.runtime.Code;
@@ -386,13 +387,68 @@ public class CodeGenerator extends VisitorAdaptor{
 		stackOfBreaks.add(breaklist);
     }
     
+    Stack<Integer> stackOfFE = new Stack<>();
+    int foreachLoop;
+    public void visit(ForeachIdent ident) {
+    	Code.loadConst(-1); // 
+    	foreachLoop = Code.pc;
+    	Code.loadConst(1);
+    	Code.put(Code.add); // niz, ind
+    	Code.put(Code.dup_x1); // ind, niz, ind
+    	Code.put(Code.pop);  // ind, niz
+    	Code.put(Code.dup_x1); // niz, ind, niz
+    	Code.put(Code.arraylength); // niz, ind, n
+    	Code.put(Code.dup2); // niz, ind, n, ind, n
+    	Code.put(Code.pop); // niz, ind, n, ind
+    	
+    	stackOfFE.add(Code.pc+1);
+    	Code.putFalseJump(Code.gt, 0); // niz, ind
+    	Code.put(Code.dup2);
+//    	Code.put(Code.dup_x2); // ind, niz, ident, ind
+//    	Code.put(Code.pop); // ind, niz, ident
+//    	Code.put(Code.dup_x2); // ident, ind, niz, ident
+//    	Code.put(Code.pop); // ident, ind, niz
+//    	Code.put(Code.dup_x2); // niz, ident, ind, niz
+//    	Code.put(Code.dup2); //  niz, ident, ind, niz, ind, niz
+//    	Code.put(Code.pop); // niz, ident, ind, niz, ind
+    	
+    	Obj arrayDesignator = ((ForeachStmt)ident.getParent()).getForeachDesignator().getDesignator().obj;
+    	if (arrayDesignator.getType() == Tab.charType) {
+    		Code.put(Code.baload);
+    	} else {
+    		Code.put(Code.aload);
+    	} // niz, ind, val
+//    	Code.put(Code.dup_x2); // niz, val, ident, ind, val
+//    	Code.put(Code.pop); // niz, val, ident, ind
+//    	Code.put(Code.dup_x2); // niz, ind, val, ident, ind
+//    	Code.put(Code.pop); // niz, ind, val, ident
+//    	Code.put(Code.dup_x2); // niz, ident, ind , val , ident
+//    	Code.put(Code.dup_x1); // niz, ident, ind, ident, val, ident
+//    	Code.put(Code.pop); // niz, idetn, ind, ident, val
+    	
+
+ 
+    	Code.store(ident.obj); // niz, ind
+     	
+    }
+    
+    public void visit(ForeachLoop loop) {
+    	Code.putJump(foreachLoop);
+    }
+    
     // ovo ne znam da l radi
-    public void visit(ForeachStmt stmt) {
+    public void visit(ForeachEnd stmt) {
     	List<Integer> breakList = stackOfBreaks.pop();
     	for (int i = 0; i < breakList.size(); i++) {
     		int onecond = breakList.get(i);
     		Code.fixup(onecond);
     	}
+    	for (int x: stackOfFE) {
+    		Code.fixup(x);
+    	}
+    	stackOfFE = new Stack<>();
+    	Code.put(Code.pop);
+    	Code.put(Code.pop);
     }
     
     int addrEqFA, addrNonFA;
@@ -449,8 +505,7 @@ public class CodeGenerator extends VisitorAdaptor{
     	
     	
     	Code.loadConst(1);
-    	Code.store(booleanDesignator);
-     	
+    	Code.store(booleanDesignator);     	
     	
     	
     	stackOfFindAnyEnd.add(Code.pc + 1);
@@ -469,12 +524,10 @@ public class CodeGenerator extends VisitorAdaptor{
     	Code.put(Code.pop);
     	Code.put(Code.pop);
     	
-    	Obj booleanDesignator = ((FindAnyStmt)(dummy.getParent())).getDesignator().obj;
-    	
+    	Obj booleanDesignator = ((FindAnyStmt)(dummy.getParent())).getDesignator().obj;   	
     	
     	Code.loadConst(0);
-    	Code.store(booleanDesignator);
-    	
+    	Code.store(booleanDesignator);   	
     	
     	
     	stackOfFindAnyEnd.add(Code.pc + 1);
@@ -487,6 +540,132 @@ public class CodeGenerator extends VisitorAdaptor{
     	}
     	
     }
+    
+    public void visit(DesignatorFAR designator) {
+    	
+    	Obj arrayDesignator = designator.getDesignator1().obj;
+    	Code.load(arrayDesignator); 
+    	Code.put(Code.arraylength);
+    	Code.put(Code.newarray);
+    	if (arrayDesignator.getType() == Tab.charType) {
+			Code.put(0);
+		} else {
+			Code.put(1);
+		}
+    	Obj array2Designator = designator.getDesignator().obj;
+    	Code.store(array2Designator);
+    }
+    
+    int loopFAR;
+    Stack<Integer> stackOfFAREnd = new Stack<>();
+    Stack<Integer> stackOfFARAssign = new Stack<>();
+    
+    public void visit(FARIdent ident) {
+    	// niz1, niz2, expr
+    	Code.loadConst(-1); // niz1, niz2, expr
+    	loopFAR = Code.pc;
+    	Code.loadConst(1);
+    	Code.put(Code.add); // niz1, niz2, expr, ind
+    	
+    	Obj arrayDesignator = ((FindAndReplaceStmt)(ident.getParent())).getDesignatorFAR().getDesignator1().obj;
+    	Code.load(arrayDesignator); // niz1, niz2, expr, ind, niz2
+    	Code.put(Code.arraylength); // niz1, niz2, expr, ind, n
+    	Code.put(Code.dup_x1); // niz1, niz2, expr, n, ind, n  	
+    	Code.put(Code.pop); // niz1, niz2, expr, n, ind
+    	Code.put(Code.dup_x1); // niz1, niz2, expr, ind, n, ind
+    	
+    	stackOfFAREnd.add(Code.pc + 1);
+    	Code.putFalseJump(Code.gt, 0); // niz1, niz2, expr, ind
+    	
+    	Code.put(Code.dup); // niz1, niz2, expr, ind, ind
+    	Code.load(arrayDesignator); // niz1, niz2, expr, ind, ind, niz2,
+    	Code.put(Code.dup_x1); // niz1, niz2, expr, ind, niz2, ind, niz2
+    	Code.put(Code.pop); // niz1, niz2, expr, ind, niz2, ind
+    	
+    	if (arrayDesignator.getType() == Tab.charType) {
+    		Code.put(Code.baload);
+    	} else {
+    		Code.put(Code.aload);
+    	}  // niz1, niz2, expr, ind, val
+    	
+    	Code.put(Code.dup); // niz1, niz2, expr, ind, val, val
+    	
+    	Obj identObj = ((FindAndReplaceStmt)(ident.getParent())).getFARIdent().obj;
+    	
+    	Code.store(identObj); // niz1, niz2, expr, ind, val,
+    	
+    	Code.put(Code.dup_x2); // niz1, niz2, val, expr, ind, val
+    	Code.put(Code.pop); // niz1, niz2, val, expr, ind
+    	Code.put(Code.dup_x2); // niz1, niz2, ind, val, expr, ind
+    	Code.put(Code.pop); // niz1, niz2, ind, val, expr
+    	Code.put(Code.dup_x2); // niz1, niz2, expr, ind, val, expr
+    	
+    	stackOfFARAssign.add(Code.pc+1);
+    	Code.putFalseJump(Code.ne, 0);  // niz1, niz2, expr, ind
+    	
+    	Code.put(Code.dup); // niz1, niz2, expr, ind, ind
+    	Code.put(Code.dup); // niz1, niz2, expr, ind, ind, ind
+    	Code.load(arrayDesignator); // niz1, niz2, expr, ind, ind, ind, niz2,
+    	Code.put(Code.dup_x1); // niz1, niz2, expr, ind, ind, niz2, ind, niz2
+    	Code.put(Code.pop); // niz1, niz2, expr, ind, ind, niz2, ind
+    	
+    	if (arrayDesignator.getType() == Tab.charType) {
+    		Code.put(Code.baload);
+    	} else {
+    		Code.put(Code.aload);
+    	}  // niz1, niz2, expr, ind, ind, val
+    	
+    	Obj array2Designator = ((FindAndReplaceStmt)(ident.getParent())).getDesignatorFAR().getDesignator().obj;
+    	Code.load(array2Designator);  // niz1, niz2, expr, ind, ind, val, niz1
+    	Code.put(Code.dup_x2); // niz1, niz2, expr, ind, niz1, ind, val, niz1
+    	Code.put(Code.pop); //  niz1, niz2, expr, ind, niz1, ind, val
+    	if (arrayDesignator.getType() == Tab.charType) {
+    		Code.put(Code.bastore);
+    	} else {
+    		Code.put(Code.astore);
+    	} //  niz1, niz2, expr, ind
+    	
+    	Code.putJump(loopFAR);   
+    	for (int x: stackOfFARAssign) {
+    		Code.fixup(x);
+    	}
+    	stackOfFARAssign = new Stack<>();
+    }
+    
+    public void visit(FARAssign assign) {
+    	
+    	  // niz1, niz2, expr, ind, expr2
+    	
+    	Code.put(Code.dup2);  // niz1, niz2, expr, ind, expr2, ind, expr2
+    	
+    	Obj arrayDesignator = ((FindAndReplaceStmt)assign.getParent()).getDesignatorFAR().getDesignator().obj;
+    	Code.load(arrayDesignator); // niz1, niz2, expr, ind, expr2, ind, expr2, niz1
+    	Code.put(Code.dup_x2); //  niz1, niz2, expr, ind, expr2, niz1, ind, expr2, niz1
+    	Code.put(Code.pop); //  niz1, niz2, expr, ind, expr2, niz1, ind, expr2
+    	
+    	if (arrayDesignator.getType() == Tab.charType) {
+    		Code.put(Code.bastore);
+    	} else {
+    		Code.put(Code.astore);
+    	} //  niz1, niz2, expr, ind, expr2,
+    	
+    	Code.put(Code.pop); // niz1, niz2, expr, ind
+    	Code.putJump(loopFAR);
+    	
+    }
+    
+    public void visit(FAREnd end) {
+    	for (int x: stackOfFAREnd) {
+    		Code.fixup(x);
+    	}
+    	stackOfFAREnd = new Stack<>();
+    	
+    	Code.put(Code.pop);
+    	Code.put(Code.pop);
+    	Code.put(Code.pop);
+    	Code.put(Code.pop);
+    }
+    
     
 	
 	int formParam = 0;

@@ -1,0 +1,19 @@
+program findandreplace
+    int a, curr, b;
+    int niz2[];
+{
+    void main()    
+        int niz[];
+    {
+    niz = new int[3];
+    niz[0] = 1;
+    niz[1] = 2;
+    niz[2] = 6;
+   	
+   	niz2 = niz.findAndReplace(1+1, b => b+1 );
+   	
+   	print(niz2[0]);
+   	print(niz2[1]);
+   	print(niz2[2]);
+    }
+}

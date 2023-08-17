@@ -1,49 +1,49 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/7/2023 0:32:35
+// 16/7/2023 19:44:45
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(MoreVarDecl MoreVarDecl) { }
-    public void visit(Mulop Mulop) { }
+    public void visit(MultipleConstDecl MultipleConstDecl) { }
+    public void visit(FactParam FactParam) { }
+    public void visit(Factor Factor) { }
+    public void visit(VarDeclarations VarDeclarations) { }
+    public void visit(Statement Statement) { }
+    public void visit(Brackets Brackets) { }
     public void visit(MethodDecl MethodDecl) { }
     public void visit(Relop Relop) { }
-    public void visit(StatementList StatementList) { }
-    public void visit(ClassVarDecl ClassVarDecl) { }
-    public void visit(Addop Addop) { }
-    public void visit(ClassConstr ClassConstr) { }
-    public void visit(StmtConst StmtConst) { }
-    public void visit(Factor Factor) { }
-    public void visit(CondTerm CondTerm) { }
-    public void visit(Designator Designator) { }
-    public void visit(Term Term) { }
-    public void visit(Condition Condition) { }
-    public void visit(FactParam FactParam) { }
-    public void visit(MethodFormPars MethodFormPars) { }
-    public void visit(EndOfVarDecl EndOfVarDecl) { }
-    public void visit(MultipleFormPar MultipleFormPar) { }
     public void visit(ElseStatement ElseStatement) { }
     public void visit(ClassConstrMethod ClassConstrMethod) { }
-    public void visit(Brackets Brackets) { }
-    public void visit(MethodVarDecl MethodVarDecl) { }
-    public void visit(ClassExtends ClassExtends) { }
     public void visit(Expr Expr) { }
-    public void visit(ClassMethod ClassMethod) { }
-    public void visit(ActPars ActPars) { }
-    public void visit(DesignatorStatement DesignatorStatement) { }
-    public void visit(MultipleConstDecl MultipleConstDecl) { }
-    public void visit(MoreCondFacts MoreCondFacts) { }
-    public void visit(Statement Statement) { }
+    public void visit(StmtConst StmtConst) { }
     public void visit(VarDecl VarDecl) { }
-    public void visit(IfStatement IfStatement) { }
-    public void visit(VarDeclarations VarDeclarations) { }
-    public void visit(Declaration Declaration) { }
-    public void visit(MethodDeclList MethodDeclList) { }
-    public void visit(SingleConstDecl SingleConstDecl) { }
     public void visit(SingleFormPar SingleFormPar) { }
+    public void visit(ClassMethod ClassMethod) { }
+    public void visit(ClassExtends ClassExtends) { }
+    public void visit(Declaration Declaration) { }
+    public void visit(Condition Condition) { }
+    public void visit(ClassConstr ClassConstr) { }
+    public void visit(Mulop Mulop) { }
+    public void visit(DesignatorStatement DesignatorStatement) { }
+    public void visit(MethodFormPars MethodFormPars) { }
+    public void visit(Addop Addop) { }
+    public void visit(StatementList StatementList) { }
+    public void visit(SingleConstDecl SingleConstDecl) { }
+    public void visit(EndOfVarDecl EndOfVarDecl) { }
+    public void visit(MoreCondFacts MoreCondFacts) { }
+    public void visit(CondTerm CondTerm) { }
+    public void visit(MultipleFormPar MultipleFormPar) { }
+    public void visit(IfStatement IfStatement) { }
+    public void visit(ClassVarDecl ClassVarDecl) { }
+    public void visit(MethodVarDecl MethodVarDecl) { }
+    public void visit(MethodDeclList MethodDeclList) { }
+    public void visit(ActPars ActPars) { }
+    public void visit(Designator Designator) { }
+    public void visit(MoreVarDecl MoreVarDecl) { }
+    public void visit(Term Term) { }
     public void visit(Type Type) { visit(); }
     public void visit(Percent Percent) { visit(); }
     public void visit(Slash Slash) { visit(); }
@@ -107,10 +107,17 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NoStmtCnst NoStmtCnst) { visit(); }
     public void visit(StmtCnst StmtCnst) { visit(); }
     public void visit(ForeachDesignator ForeachDesignator) { visit(); }
+    public void visit(ForeachIdent ForeachIdent) { visit(); }
+    public void visit(ForeachEnd ForeachEnd) { visit(); }
+    public void visit(ForeachLoop ForeachLoop) { visit(); }
     public void visit(FindAnyEnd FindAnyEnd) { visit(); }
     public void visit(DummyNon DummyNon) { visit(); }
     public void visit(DummyEq DummyEq) { visit(); }
     public void visit(DummyFindAny DummyFindAny) { visit(); }
+    public void visit(DesignatorFAR DesignatorFAR) { visit(); }
+    public void visit(FARIdent FARIdent) { visit(); }
+    public void visit(FARAssign FARAssign) { visit(); }
+    public void visit(FAREnd FAREnd) { visit(); }
     public void visit(ListStmts ListStmts) { visit(); }
     public void visit(ForeachStmt ForeachStmt) { visit(); }
     public void visit(FindAndReplaceStmt FindAndReplaceStmt) { visit(); }

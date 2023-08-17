@@ -144,6 +144,15 @@ nonterminal DummyEq;
 nonterminal DummyNon;
 nonterminal FindAnyEnd;
 
+nonterminal ForeachEnd;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ForeachIdent;
+nonterminal ForeachLoop;
+
+nonterminal DesignatorFAR;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj FARIdent;
+nonterminal FAREnd;
+nonterminal FARAssign;
+
 precedence left ELSE;
 
 
@@ -296,12 +305,20 @@ Statement ::= (DesignStmt) DesignatorStatement
 			|
 			(FindAnyStmt) Designator:designator Assignop Designator:array DOT FINDANY LPAREN Expr DummyFindAny DummyEq DummyNon SEMICOLON FindAnyEnd
 			|
-			(FindAndReplaceStmt) Designator Assignop Designator DOT FINDANDREPLACE LPAREN Expr COMMA IDENT:ident ASSIGN Expr RPAREN SEMICOLON
+			(FindAndReplaceStmt) DesignatorFAR  LPAREN Expr COMMA FARIdent ASSIGN Expr FARAssign RPAREN SEMICOLON FAREnd
 			|
-			(ForeachStmt) ForeachDesignator LPAREN IDENT:ident ASSIGN StatementList RPAREN SEMICOLON
+			(ForeachStmt) ForeachDesignator LPAREN ForeachIdent ASSIGN StatementList ForeachLoop ForeachEnd
 			|
 			(ListStmts) LCURLY StatementList RCURLY
 			;
+	
+FAREnd ::= (FAREnd) /* epsilon */;
+			
+FARAssign ::= (FARAssign) /* epsilon */;
+	
+FARIdent ::= (FARIdent) IDENT:ident;
+			
+DesignatorFAR ::= (DesignatorFAR) Designator Assignop Designator DOT FINDANDREPLACE; 
 
 DummyFindAny ::= (DummyFindAny) RPAREN;	
 
@@ -309,7 +326,13 @@ DummyEq ::= (DummyEq) /* epsilon */;
 
 DummyNon ::= (DummyNon) /* epsilon */;
 
-FindAnyEnd ::= (FindAnyEnd) /* epislon */;			
+FindAnyEnd ::= (FindAnyEnd) /* epislon */;	
+
+ForeachLoop ::= (ForeachLoop) RPAREN ;
+
+ForeachEnd ::= (ForeachEnd) SEMICOLON;
+
+ForeachIdent ::= (ForeachIdent) IDENT:ident ;		
 
 ForeachDesignator ::= (ForeachDesignator) Designator DOT FOREACH /* epislon */;
 

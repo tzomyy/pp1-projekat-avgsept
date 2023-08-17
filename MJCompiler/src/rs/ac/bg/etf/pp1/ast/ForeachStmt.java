@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/7/2023 0:32:35
+// 16/7/2023 19:44:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,15 +8,22 @@ package rs.ac.bg.etf.pp1.ast;
 public class ForeachStmt extends Statement {
 
     private ForeachDesignator ForeachDesignator;
-    private String ident;
+    private ForeachIdent ForeachIdent;
     private StatementList StatementList;
+    private ForeachLoop ForeachLoop;
+    private ForeachEnd ForeachEnd;
 
-    public ForeachStmt (ForeachDesignator ForeachDesignator, String ident, StatementList StatementList) {
+    public ForeachStmt (ForeachDesignator ForeachDesignator, ForeachIdent ForeachIdent, StatementList StatementList, ForeachLoop ForeachLoop, ForeachEnd ForeachEnd) {
         this.ForeachDesignator=ForeachDesignator;
         if(ForeachDesignator!=null) ForeachDesignator.setParent(this);
-        this.ident=ident;
+        this.ForeachIdent=ForeachIdent;
+        if(ForeachIdent!=null) ForeachIdent.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
+        this.ForeachLoop=ForeachLoop;
+        if(ForeachLoop!=null) ForeachLoop.setParent(this);
+        this.ForeachEnd=ForeachEnd;
+        if(ForeachEnd!=null) ForeachEnd.setParent(this);
     }
 
     public ForeachDesignator getForeachDesignator() {
@@ -27,12 +34,12 @@ public class ForeachStmt extends Statement {
         this.ForeachDesignator=ForeachDesignator;
     }
 
-    public String getIdent() {
-        return ident;
+    public ForeachIdent getForeachIdent() {
+        return ForeachIdent;
     }
 
-    public void setIdent(String ident) {
-        this.ident=ident;
+    public void setForeachIdent(ForeachIdent ForeachIdent) {
+        this.ForeachIdent=ForeachIdent;
     }
 
     public StatementList getStatementList() {
@@ -43,24 +50,49 @@ public class ForeachStmt extends Statement {
         this.StatementList=StatementList;
     }
 
+    public ForeachLoop getForeachLoop() {
+        return ForeachLoop;
+    }
+
+    public void setForeachLoop(ForeachLoop ForeachLoop) {
+        this.ForeachLoop=ForeachLoop;
+    }
+
+    public ForeachEnd getForeachEnd() {
+        return ForeachEnd;
+    }
+
+    public void setForeachEnd(ForeachEnd ForeachEnd) {
+        this.ForeachEnd=ForeachEnd;
+    }
+
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
 
     public void childrenAccept(Visitor visitor) {
         if(ForeachDesignator!=null) ForeachDesignator.accept(visitor);
+        if(ForeachIdent!=null) ForeachIdent.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
+        if(ForeachLoop!=null) ForeachLoop.accept(visitor);
+        if(ForeachEnd!=null) ForeachEnd.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(ForeachDesignator!=null) ForeachDesignator.traverseTopDown(visitor);
+        if(ForeachIdent!=null) ForeachIdent.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
+        if(ForeachLoop!=null) ForeachLoop.traverseTopDown(visitor);
+        if(ForeachEnd!=null) ForeachEnd.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(ForeachDesignator!=null) ForeachDesignator.traverseBottomUp(visitor);
+        if(ForeachIdent!=null) ForeachIdent.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
+        if(ForeachLoop!=null) ForeachLoop.traverseBottomUp(visitor);
+        if(ForeachEnd!=null) ForeachEnd.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -75,11 +107,26 @@ public class ForeachStmt extends Statement {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+ident);
+        if(ForeachIdent!=null)
+            buffer.append(ForeachIdent.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(StatementList!=null)
             buffer.append(StatementList.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ForeachLoop!=null)
+            buffer.append(ForeachLoop.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ForeachEnd!=null)
+            buffer.append(ForeachEnd.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

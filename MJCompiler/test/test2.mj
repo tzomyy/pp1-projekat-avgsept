@@ -1,0 +1,25 @@
+program test301
+    int a, curr, b;
+{
+    void main()    
+        int niz[];
+    {
+    niz = new int[3];
+    niz[0] = 1;
+    niz[1] = 2;
+    niz[2] = 6;
+    a = 0;
+    niz.foreach(curr => {
+    	a = a + curr * curr;
+    });
+   
+    print(a);
+    
+    b = 0;
+    niz.foreach(curr => {
+    	b = b + curr * 2;
+    });
+   
+    print(b);
+    }
+}

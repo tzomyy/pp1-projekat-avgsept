@@ -1,49 +1,49 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/7/2023 0:32:35
+// 16/7/2023 19:44:45
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
-    public void visit(MoreVarDecl MoreVarDecl);
-    public void visit(Mulop Mulop);
+    public void visit(MultipleConstDecl MultipleConstDecl);
+    public void visit(FactParam FactParam);
+    public void visit(Factor Factor);
+    public void visit(VarDeclarations VarDeclarations);
+    public void visit(Statement Statement);
+    public void visit(Brackets Brackets);
     public void visit(MethodDecl MethodDecl);
     public void visit(Relop Relop);
-    public void visit(StatementList StatementList);
-    public void visit(ClassVarDecl ClassVarDecl);
-    public void visit(Addop Addop);
-    public void visit(ClassConstr ClassConstr);
-    public void visit(StmtConst StmtConst);
-    public void visit(Factor Factor);
-    public void visit(CondTerm CondTerm);
-    public void visit(Designator Designator);
-    public void visit(Term Term);
-    public void visit(Condition Condition);
-    public void visit(FactParam FactParam);
-    public void visit(MethodFormPars MethodFormPars);
-    public void visit(EndOfVarDecl EndOfVarDecl);
-    public void visit(MultipleFormPar MultipleFormPar);
     public void visit(ElseStatement ElseStatement);
     public void visit(ClassConstrMethod ClassConstrMethod);
-    public void visit(Brackets Brackets);
-    public void visit(MethodVarDecl MethodVarDecl);
-    public void visit(ClassExtends ClassExtends);
     public void visit(Expr Expr);
-    public void visit(ClassMethod ClassMethod);
-    public void visit(ActPars ActPars);
-    public void visit(DesignatorStatement DesignatorStatement);
-    public void visit(MultipleConstDecl MultipleConstDecl);
-    public void visit(MoreCondFacts MoreCondFacts);
-    public void visit(Statement Statement);
+    public void visit(StmtConst StmtConst);
     public void visit(VarDecl VarDecl);
-    public void visit(IfStatement IfStatement);
-    public void visit(VarDeclarations VarDeclarations);
-    public void visit(Declaration Declaration);
-    public void visit(MethodDeclList MethodDeclList);
-    public void visit(SingleConstDecl SingleConstDecl);
     public void visit(SingleFormPar SingleFormPar);
+    public void visit(ClassMethod ClassMethod);
+    public void visit(ClassExtends ClassExtends);
+    public void visit(Declaration Declaration);
+    public void visit(Condition Condition);
+    public void visit(ClassConstr ClassConstr);
+    public void visit(Mulop Mulop);
+    public void visit(DesignatorStatement DesignatorStatement);
+    public void visit(MethodFormPars MethodFormPars);
+    public void visit(Addop Addop);
+    public void visit(StatementList StatementList);
+    public void visit(SingleConstDecl SingleConstDecl);
+    public void visit(EndOfVarDecl EndOfVarDecl);
+    public void visit(MoreCondFacts MoreCondFacts);
+    public void visit(CondTerm CondTerm);
+    public void visit(MultipleFormPar MultipleFormPar);
+    public void visit(IfStatement IfStatement);
+    public void visit(ClassVarDecl ClassVarDecl);
+    public void visit(MethodVarDecl MethodVarDecl);
+    public void visit(MethodDeclList MethodDeclList);
+    public void visit(ActPars ActPars);
+    public void visit(Designator Designator);
+    public void visit(MoreVarDecl MoreVarDecl);
+    public void visit(Term Term);
     public void visit(Type Type);
     public void visit(Percent Percent);
     public void visit(Slash Slash);
@@ -107,10 +107,17 @@ public interface Visitor {
     public void visit(NoStmtCnst NoStmtCnst);
     public void visit(StmtCnst StmtCnst);
     public void visit(ForeachDesignator ForeachDesignator);
+    public void visit(ForeachIdent ForeachIdent);
+    public void visit(ForeachEnd ForeachEnd);
+    public void visit(ForeachLoop ForeachLoop);
     public void visit(FindAnyEnd FindAnyEnd);
     public void visit(DummyNon DummyNon);
     public void visit(DummyEq DummyEq);
     public void visit(DummyFindAny DummyFindAny);
+    public void visit(DesignatorFAR DesignatorFAR);
+    public void visit(FARIdent FARIdent);
+    public void visit(FARAssign FARAssign);
+    public void visit(FAREnd FAREnd);
     public void visit(ListStmts ListStmts);
     public void visit(ForeachStmt ForeachStmt);
     public void visit(FindAndReplaceStmt FindAndReplaceStmt);
